@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
-import { Context } from "../context/ContextProvider";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo } from "../redux/slices/todoSlice";
 
 function TextInput() {
+  const todos = useSelector((store) => store.todos.todos);
   const [inputValue, setInputValue] = useState("");
-  const { onAddText } = useContext(Context);
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -11,10 +13,14 @@ function TextInput() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      onAddText(inputValue);
+      dispatch(addTodo(inputValue));
       setInputValue("");
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <form onSubmit={handleSubmit}>
